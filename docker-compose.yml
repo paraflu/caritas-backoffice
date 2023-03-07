@@ -66,6 +66,7 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+            
     meilisearch:
         image: 'getmeili/meilisearch:latest'
         ports:
