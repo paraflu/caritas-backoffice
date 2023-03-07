@@ -1,6 +1,8 @@
 {
     "private": true,
     "scripts": {
+        "start": "npm run dev",
+        "prod": "npm run build",
         "dev": "vite",
         "build": "vite build"
     },

@@ -17,12 +17,15 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('warehousedetails', function (Blueprint $table) {
+        Schema::create('warehouse_details', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('warehouse_id')->costrained('warehouses');
             $table->foreignId('product_id')->costrained('products');
             $table->float('quantity')->nullable(false);
+            $table->float('price')->nullable(false);
             $table->enum('origin', ['caritas', 'donation'])->default('caritas');
+            $table->timestamps();
+
         });
 
         Schema::create('products', function (Blueprint $table) {
@@ -32,9 +35,9 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('delivery', function (Blueprint $table) {
+        Schema::create('deliveries', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreign('charity_id')->contained('charities');
+            $table->foreignId('charity_id')->costrained('charities');
             $table->foreignId('warehouse_id')->costrained('warehouses');
             $table->float('total')->nullable(false);
             $table->timestamps();
@@ -42,9 +45,10 @@ return new class extends Migration {
 
         Schema::create('deliverydetails', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreign('delivery_id')->contained('deliveries');
-            $table->foreign('product_id')->contained('products');
+            $table->foreignId('delivery_id')->costrained('deliveries');
+            $table->foreignId('product_id')->costrained('products');
             $table->integer('quantity')->nullable(false);
+            $table->enum('origin', ['caritas', 'donation'])->default('caritas');
             $table->float('price')->nullable(false);
             $table->float('total')->nullable(false);
             $table->timestamps();
@@ -66,5 +70,9 @@ return new class extends Migration {
     {
         Schema::drop('warehoues');
         Schema::drop('warehousedetails');
+        Schema::drop('products');
+        Schema::drop('delivery');
+        Schema::drop('deliverydetails');
+        Schema::drop('charities');
     }
 };
