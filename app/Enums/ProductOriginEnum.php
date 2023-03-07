@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ProductOriginEnum
+enum ProductOriginEnum: string
 {
     case Caritas = 'caritas';
     case Donation = 'donation';

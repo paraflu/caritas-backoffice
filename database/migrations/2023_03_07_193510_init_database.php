@@ -38,12 +38,11 @@ return new class extends Migration {
         Schema::create('deliveries', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('charity_id')->costrained('charities');
-            $table->foreignId('warehouse_id')->costrained('warehouses');
             $table->float('total')->nullable(false);
             $table->timestamps();
         });
 
-        Schema::create('deliverydetails', function (Blueprint $table) {
+        Schema::create('delivery_details', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('delivery_id')->costrained('deliveries');
             $table->foreignId('product_id')->costrained('products');

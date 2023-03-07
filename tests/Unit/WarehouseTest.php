@@ -26,5 +26,7 @@ class WarehouseTest extends TestCase
         }
 
         $this->assertEquals(3, $wh->details->count());
+
     }
+    
 }
