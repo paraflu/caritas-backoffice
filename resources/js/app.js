@@ -1,9 +1,4 @@
-import './bootstrap';
-
-import Alpine from 'alpinejs';
-
-window.Alpine = Alpine;
-
-Alpine.start();
-
-console.log('hello world');
+import "../css/app.css";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
+import "../css/datatable.tailwind.css";
+import "./bootstrap";
