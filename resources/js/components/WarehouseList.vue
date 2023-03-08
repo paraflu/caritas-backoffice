@@ -1,17 +1,23 @@
 <template>
-    <DataTable :data="data" class="display" :options="options">
-        <thead>
-            <tr>
-                <th>{{ $t('Mese') }}</th>
-                <th>{{ $t('Anno') }}</th>
-            </tr>
-        </thead>
-    </DataTable>
+    <div class="w-full">
+        <div class="flex mb-4 justify-end">
+            <PrimaryButton :route="route('warehouse.create')">{{ $t('Inserisci mese') }}</PrimaryButton>
+        </div>
+        <DataTable :data="data" :options="options">
+            <thead>
+                <tr>
+                    <th>{{ $t('Mese') }}</th>
+                    <th>{{ $t('Anno') }}</th>
+                </tr>
+            </thead>
+        </DataTable>
+    </div>
 </template>
 
 <script setup>
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net';
+import PrimaryButton from './PrimaryButton.vue';
 import route from 'ziggy-js';
 
 DataTable.use(DataTablesCore);

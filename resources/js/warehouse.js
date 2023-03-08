@@ -8,6 +8,4 @@ const app = createApp({
 }).use(ZiggyVue, Ziggy)
 
 app.use(i18n);
-
-// app.component('warehouse-list', WarehouseList)
 app.mount('#index');
