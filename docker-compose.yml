@@ -17,7 +17,7 @@ services:
         volumes:
             - .:/var/www/html
 
-    cache:
+    redis:
         image: redis
 
     mysql:
