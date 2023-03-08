@@ -2,8 +2,8 @@
     <DataTable :data="data" class="display" :options="options">
         <thead>
             <tr>
-                <th>A</th>
-                <th>B</th>
+                <th>{{ $t('Mese') }}</th>
+                <th>{{ $t('Anno') }}</th>
             </tr>
         </thead>
     </DataTable>
@@ -16,12 +16,16 @@ import route from 'ziggy-js';
 
 DataTable.use(DataTablesCore);
 
+
+const token = document.head.querySelector('meta[name="csrf-token"]')?.attributes.content.value;
+
 const options = {
     serverSide: true,
     processing: true,
     ajax: {
         url: route('warehouse.pagedata'),
         method: 'POST',
+        headers: { 'X-CSRF-TOKEN': token }
     }
 }
 
