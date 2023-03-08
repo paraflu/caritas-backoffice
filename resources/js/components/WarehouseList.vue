@@ -22,6 +22,9 @@ const token = document.head.querySelector('meta[name="csrf-token"]')?.attributes
 const options = {
     serverSide: true,
     processing: true,
+    language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.3/i18n/it-IT.json'
+    },
     ajax: {
         url: route('warehouse.pagedata'),
         method: 'POST',
