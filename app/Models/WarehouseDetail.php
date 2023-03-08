@@ -13,11 +13,11 @@ class WarehouseDetail extends Model
 
     protected $fillable = [
         'quantity',
-        'origin'
+        'origin',
     ];
 
     protected $casts = [
-        'origin' => ProductOriginEnum::class
+        'origin' => ProductOriginEnum::class,
     ];
 
     public function warehouse()

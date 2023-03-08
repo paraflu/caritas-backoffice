@@ -11,7 +11,7 @@ class Warehouse extends Model
 
     protected $fillable = [
         'month',
-        'year'
+        'year',
     ];
 
     public function details()

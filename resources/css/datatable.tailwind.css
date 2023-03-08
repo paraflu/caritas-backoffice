@@ -1,8 +1,0 @@
-@import 'datatables.net-dt';
-.dataTables_wrapper {
-    @apply bg-gray-200 p-4 border-2 border-gray-100 rounded;
-}
-
-.dataTables_wrapper .dataTables_length select {
-    @apply pr-6;
-}

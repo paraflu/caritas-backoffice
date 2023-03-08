@@ -11,7 +11,7 @@ class Charity extends Model
 
     protected $fillable = [
         'firstname',
-        'secondname'
+        'secondname',
     ];
 
     public function deliveries()

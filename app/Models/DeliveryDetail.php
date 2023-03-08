@@ -17,8 +17,9 @@ class DeliveryDetail extends Model
         'origin',
         'total',
     ];
+
     protected $casts = [
-        'origin' => ProductOriginEnum::class
+        'origin' => ProductOriginEnum::class,
     ];
 
     public function delivery(): HasOne
@@ -26,9 +27,10 @@ class DeliveryDetail extends Model
         return $this->hasOne(Delivery::class);
     }
 
-    public function save(array $options = array()): bool
+    public function save(array $options = []): bool
     {
         $this->total = $this->price * $this->quantity;
+
         return parent::save($options);
     }
 }
