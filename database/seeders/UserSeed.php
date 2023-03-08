@@ -16,9 +16,6 @@ class UserSeed extends Seeder
     public function run(): void
     {
         $admin = Permission::firstWhere('name', 'admin') ?? Permission::create(['name' => 'admin']);
-
-
-
         $user = User::firstWhere('name', 'Admin') ?? User::create(
             [
                 'name' => 'Admin',
