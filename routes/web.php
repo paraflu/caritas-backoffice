@@ -35,7 +35,8 @@ Route::prefix('/warehouse')
 ->group(function () {
     Route::get('/', [WarehouseController::class, 'index'])->name('index');
     Route::post('/pagedata', [WarehouseController::class, 'pagedata'])->name('pagedata');
-    Route::post('/create', [WarehouseController::class, 'create'])->name('create');
+    Route::get('/create', [WarehouseController::class, 'create'])->name('create');
+    Route::post('/create', [WarehouseController::class, 'store'])->name('store');
 });
 
 Route::middleware('auth')->group(function () {

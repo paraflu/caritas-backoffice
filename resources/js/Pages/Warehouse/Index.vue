@@ -7,15 +7,25 @@ import DataTablesCore from 'datatables.net';
 import route from 'ziggy-js';
 import { createRequest } from '@/helper/datatable_defaults';
 import { Ref, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import { goto } from '@/helper/gotourl';
 
 DataTable.use(DataTablesCore);
 
 const loading: Ref<boolean> = ref(true);
 
-const options = createRequest(route('warehouse.pagedata'));
+const { t } = useI18n();
 
-const goto = (route) => window.location.href = route;
+const options = createRequest(
+    route('warehouse.pagedata'),
+    {
+        columns: [
+            { data: 'month', title: t('Mese') },
+            { data: 'year', title: t('Anno') },
+        ]
+    });
+
 
 </script>
 

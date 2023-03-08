@@ -11,3 +11,7 @@
 .dataTables_wrapper .dataTables_length select {
   @apply pr-6;
 }
+
+.toolbar {
+  @apply flex justify-end;
+}

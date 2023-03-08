@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,6 +14,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->integer('month')->nullable(false);
             $table->integer('year')->nullable(false);
+            $table->unique(['month', 'year']);
             $table->timestamps();
         });
 
@@ -67,11 +67,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::drop('warehoues');
-        Schema::drop('warehousedetails');
+        Schema::drop('warehouses');
+        Schema::drop('warehouse_details');
         Schema::drop('products');
-        Schema::drop('delivery');
-        Schema::drop('deliverydetails');
+        Schema::drop('deliveries');
+        Schema::drop('delivery_details');
         Schema::drop('charities');
     }
 };
