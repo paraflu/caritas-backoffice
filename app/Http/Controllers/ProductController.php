@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductCreateRequest;
 use App\Models\Product;
+use Auth;
 use Illuminate\Http\Client\Request;
 use Inertia\Inertia;
 
@@ -10,7 +12,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Products/Index');
+        return Inertia::render('Products/Index', ['canCreate' => Auth::user()->can('edit product')]);
     }
 
     public function pagedata()
@@ -21,9 +23,12 @@ class ProductController extends Controller
 
     public function create()
     {
+        return Inertia::render('Products/Create');
     }
 
-    public function store(Request $request)
+    public function store(ProductCreateRequest $request)
     {
+        Product::create($request->only('description', 'price'));
+        return redirect(route('product.index'));
     }
 }

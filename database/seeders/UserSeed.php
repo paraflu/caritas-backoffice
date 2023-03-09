@@ -16,6 +16,7 @@ class UserSeed extends Seeder
     public function run(): void
     {
         $admin = Permission::firstWhere('name', 'admin') ?? Permission::create(['name' => 'admin']);
+        $editProduct = Permission::firstWhere('name', 'edit product') ?? Permission::create(['name' => 'edit product']);
         $user = User::firstWhere('name', 'Admin') ?? User::create(
             [
                 'name' => 'Admin',
@@ -25,5 +26,6 @@ class UserSeed extends Seeder
         );
 
         $user->givePermissionTo($admin);
+        $user->givePermissionTo($editProduct);
     }
 }

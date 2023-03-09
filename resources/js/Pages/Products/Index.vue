@@ -12,11 +12,13 @@ import { goto } from "@/helper/gotourl";
 
 DataTable.use(DataTablesCore);
 
+defineProps<{ canCreate?: boolean }>();
+
 const loading: Ref<boolean> = ref(true);
 
 const { t } = useI18n();
 
-const options = createRequest(route("products.pagedata"), {
+const options = createRequest(route("product.pagedata"), {
   columns: [
     { data: "id", title: t("#") },
     { data: "description", title: t("Descrizione") },
@@ -26,14 +28,14 @@ const options = createRequest(route("products.pagedata"), {
 </script>
 
 <template>
-  <Head :title="$t('products.title')" />
+  <Head :title="$t('product.title')" />
 
   <AuthenticatedLayout>
     <template #header>
       <h2
         class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
       >
-        {{ $t("products.title") }}
+        {{ $t("product.title") }}
       </h2>
     </template>
 
@@ -41,8 +43,8 @@ const options = createRequest(route("products.pagedata"), {
       <div
         class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 flex justify-end mb-4"
       >
-        <PrimaryButton @click="goto(route('products.create'))">
-          {{ $t("products.insert") }}
+        <PrimaryButton v-if="canCreate" @click="goto(route('product.create'))">
+          {{ $t("product.insert") }}
         </PrimaryButton>
       </div>
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">

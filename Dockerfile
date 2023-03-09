@@ -20,6 +20,7 @@ RUN mkdir -p /home/appuser && groupadd -g ${GID:-1000} appuser && \
 WORKDIR /var/www/html
 RUN chown www-data.www-data -R /var/www/html && a2enmod rewrite
 
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+RUN docker-php-ext-install mysqli pdo pdo_mysql 
+RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 USER appuser
