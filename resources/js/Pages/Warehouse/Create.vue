@@ -9,7 +9,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { validate } from '@/helper/validate';
 const { t } = useI18n();
+
 
 defineProps<{ status?: string, allow_resume: boolean }>();
 
@@ -26,8 +28,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('warehouse.store'), {
-    });
+    form.post(route('warehouse.store'),);
 };
 
 const minYear = DateTime.now().year - 1;
@@ -64,7 +65,7 @@ const maxYear = DateTime.now().year + 1;
                                 <InputLabel for="month" :value="$t('warehouse.mese')" />
 
                                 <TextInput id="month" type="number" class="mt-1 block w-full" v-model="form.month" required
-                                    min="1" max="12" autofocus autocomplete="username" />
+                                    min="1" max="12" autofocus />
 
                                 <InputError class="mt-2" :message="form.errors.month" />
                             </div>
@@ -73,7 +74,7 @@ const maxYear = DateTime.now().year + 1;
 
                                 <TextInput id="year" type="number" class="mt-1 block w-full" v-model="form.year" required
                                     maxlength="4" size="4" :min="minYear" :max="maxYear" autofocus
-                                    @keypress="validate($event, minYear, maxYear)" autocomplete="username" />
+                                    @keypress="validate($event, minYear, maxYear)" />
 
                                 <InputError class="mt-2" :message="form.errors.year" />
                             </div>

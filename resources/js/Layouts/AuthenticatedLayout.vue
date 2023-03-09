@@ -33,6 +33,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('warehouse.index')" :active="route().current('warehouse.index')">
                                     {{ $t('Pacco alimentare') }}
                                 </NavLink>
+                                 <NavLink :href="route('products.index')" :active="route().current('products.index')">
+                                    {{ $t('Prodotti') }}
+                                </NavLink>
                             </div>
                         </div>
 
@@ -95,6 +98,9 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('warehouse.index')" :active="route().current('warehouse.index')">
                             {{ $t('Pacco alimentare') }}
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('product.index')" :active="route().current('product.index')">
+                            {{ $t('Prodotti') }}
                         </ResponsiveNavLink>
                     </div>
 

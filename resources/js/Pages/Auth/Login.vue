@@ -1,12 +1,11 @@
 <script setup>
 import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
 
 defineProps({
     canResetPassword: Boolean,
@@ -27,7 +26,7 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthenticatedLayout>
+    <GuestLayout>
 
         <Head title="Log in" />
 
@@ -74,5 +73,5 @@ const submit = () => {
                 </div>
             </form>
         </div>
-    </AuthenticatedLayout>
+    </GuestLayout>
 </template>
