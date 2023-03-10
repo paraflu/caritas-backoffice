@@ -18,9 +18,9 @@ const form = useForm({
 });
 </script>
 <template>
-  <section>
+  <v-card>
     <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-      <form @submit.prevent="$emit('submit')">
+      <v-form @submit.prevent="$emit('submit')">
         <section>
           <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -30,7 +30,7 @@ const form = useForm({
 
           <div class="mt-6">
             <InputLabel for="description" :value="$t('Descrizione')" />
-            <TextInput
+            <v-text-field
               id="description"
               type="text"
               class="mt-1 block w-full"
@@ -58,7 +58,7 @@ const form = useForm({
             }}</PrimaryButton>
           </div>
         </section>
-      </form>
+      </v-form>
     </div>
-  </section>
+  </v-card>
 </template>

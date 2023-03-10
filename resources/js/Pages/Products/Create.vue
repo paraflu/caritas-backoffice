@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Form from "@/Pages/Products/Partial/Form.vue";
-import { Head, useForm, router } from "@inertiajs/vue3";
+import { Head, router, useForm } from "@inertiajs/vue3";
 import route from "ziggy-js";
 
 defineProps<{ status?: string }>();
