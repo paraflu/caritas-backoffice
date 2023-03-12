@@ -9,7 +9,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const props = defineProps<{
   title: string;
-  form: InertiaForm<{ description: string; price: string }>;
+  form: InertiaForm<{ description: string; price: number }>;
 }>();
 
 const form = useForm({
@@ -18,9 +18,9 @@ const form = useForm({
 });
 </script>
 <template>
-  <v-card>
+  <section>
     <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-      <v-form @submit.prevent="$emit('submit')">
+      <form @submit.prevent="$emit('submit')">
         <section>
           <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -30,7 +30,7 @@ const form = useForm({
 
           <div class="mt-6">
             <InputLabel for="description" :value="$t('Descrizione')" />
-            <v-text-field
+            <TextInput
               id="description"
               type="text"
               class="mt-1 block w-full"
@@ -46,9 +46,9 @@ const form = useForm({
               id="price"
               class="mt-1 block w-full"
               v-model="props.form.price"
+              :options="{ currency: 'EUR' }" 
               required
             />
-
             <InputError class="mt-2" :message="props.form.errors.price" />
           </div>
 
@@ -58,7 +58,7 @@ const form = useForm({
             }}</PrimaryButton>
           </div>
         </section>
-      </v-form>
+      </form>
     </div>
-  </v-card>
+  </section>
 </template>

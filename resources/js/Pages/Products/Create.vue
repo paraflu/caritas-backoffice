@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Form from "@/Pages/Products/Partial/Form.vue";
-import { Head, router, useForm } from "@inertiajs/vue3";
+import { Head, useForm, router } from "@inertiajs/vue3";
 import route from "ziggy-js";
 
 defineProps<{ status?: string }>();
 
-const form = useForm({ description: "", price: "0 €" });
+const form = useForm({ description: "", price: 1234});
 
 const onSubmit = () => {
   form
     .transform(({ price, description }) => ({
       description,
-      price: price.replace(",", "."),
+      price:price,
     }))
     .post(route("product.store"));
 };

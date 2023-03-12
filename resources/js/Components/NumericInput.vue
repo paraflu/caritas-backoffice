@@ -119,9 +119,8 @@ import { object } from "yup";
 // };
 
 const props = withDefaults(
-  defineProps<{ modelValue: number; options: any }>(),
+  defineProps<{ modelValue: number; options?: any }>(),
   {
-    number: null,
     options: { currency: "EUR" },
   }
 );
@@ -130,23 +129,22 @@ const emit = defineEmits(["input", "change"]);
 
 const formattedValue = ref("");
 
-const inputRef = ref<HTMLInputElement | null>(null);
-
-onMounted(() => {
-  const { inputRef, numberValue } = useCurrencyInput(props.options, false);
-});
+const { inputRef } = useCurrencyInput(props.options);
 </script>
 
 <template>
   <!-- <input
+      class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+      :value="modelValue"
+      @focus="($event) => ($event.target as HTMLInputElement).select()"
+      @keydown="onKeydown"
+      :maxlength="length + decimal ?? 0 + 1"
+      :size="length + decimal ?? 0 + 1"
+      type="text"
+      ref="input"
+    /> -->
+  <input type="text"
     class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-    :value="modelValue"
     @focus="($event) => ($event.target as HTMLInputElement).select()"
-    @keydown="onKeydown"
-    :maxlength="length + decimal ?? 0 + 1"
-    :size="length + decimal ?? 0 + 1"
-    type="text"
-    ref="input"
-  /> -->
-  <VTextField ref="inputRef" />
+    ref="inputRef" />
 </template>

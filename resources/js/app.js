@@ -9,10 +9,10 @@ import { createI18n } from 'vue-i18n';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
-import 'vuetify/styles'
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+// import 'vuetify/styles'
+// import { createVuetify } from 'vuetify'
+// import * as components from 'vuetify/components'
+// import * as directives from 'vuetify/directives'
 // import VeeValidate from 'vee-validate';
 // import VueCurrencyInput from "vue-currency-input";
 
@@ -23,13 +23,13 @@ createInertiaApp({
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
 
-        const vuetify = createVuetify({
-            theme: {
-                defaultTheme: 'light'
-            },
-            components,
-            directives,
-        })
+        // const vuetify = createVuetify({
+        //     theme: {
+        //         defaultTheme: 'light'
+        //     },
+        //     components,
+        //     directives,
+        // })
 
         const i18n = createI18n({
             legacy: false,
@@ -45,7 +45,7 @@ createInertiaApp({
             .use(VueSweetalert2)
             // .use(VueCurrencyInput)
             // .use(VeeValidate)
-            .use(vuetify)
+            // .use(vuetify)
             .mount(el);
     },
     progress: {
