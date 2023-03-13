@@ -1,1 +1,1 @@
-export const goto = (route: string) => window.location.href = route;
+export const goto = (url: string) => window.location.href = url;

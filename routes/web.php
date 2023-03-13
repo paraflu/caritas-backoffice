@@ -38,6 +38,9 @@ Route::prefix('/warehouse')
         Route::post('/pagedata', [WarehouseController::class, 'pagedata'])->name('pagedata');
         Route::get('/create', [WarehouseController::class, 'create'])->name('create');
         Route::post('/create', [WarehouseController::class, 'store'])->name('store');
+        Route::get('/edit/{warehouse}', [WarehouseController::class, 'edit'])->name('edit');
+        Route::put('/edit/{warehouse}', [WarehouseController::class, 'update'])->name('update');
+        Route::delete('/delete/{warehouse}', [WarehouseController::class, 'destroy'])->name('destroy');
     });
 
 Route::prefix('/products')
@@ -47,6 +50,9 @@ Route::prefix('/products')
         Route::post('/pagedata', [ProductController::class, 'pagedata'])->name('pagedata');
         Route::get('/create', [ProductController::class, 'create'])->name('create');
         Route::post('/create', [ProductController::class, 'store'])->name('store');
+        Route::get('/edit/{product}', [ProductController::class, 'edit'])->name('edit');
+        Route::put('/edit/{product}', [ProductController::class, 'update'])->name('update');
+        Route::delete('/delete/{product}', [ProductController::class, 'destroy'])->name('destroy');
     });
 
 Route::middleware('auth')->group(function () {

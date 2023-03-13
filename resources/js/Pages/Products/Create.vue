@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { goto } from "@/helper/gotourl";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Form from "@/Pages/Products/Partial/Form.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
@@ -6,13 +7,13 @@ import route from "ziggy-js";
 
 defineProps<{ status?: string }>();
 
-const form = useForm({ description: "", price: 1234});
+const form = useForm({ description: "", price: 0 });
 
 const onSubmit = () => {
   form
     .transform(({ price, description }) => ({
       description,
-      price:price,
+      price: price,
     }))
     .post(route("product.store"));
 };
@@ -21,9 +22,7 @@ const onSubmit = () => {
   <Head :title="$t('product.create')" />
   <AuthenticatedLayout>
     <template #header>
-      <h2
-        class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
-      >
+      <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
         {{ $t("product.create") }}
       </h2>
     </template>
@@ -33,11 +32,8 @@ const onSubmit = () => {
     </div>
     <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-        <Form
-          @submit.prevent="onSubmit"
-          :form="form"
-          :title="$t('product.create')"
-        ></Form>
+        <Form @submit.prevent="onSubmit" @back="goto(route('product.index'))" :form="form" :title="$t('product.create')">
+        </Form>
       </div>
     </div>
   </AuthenticatedLayout>

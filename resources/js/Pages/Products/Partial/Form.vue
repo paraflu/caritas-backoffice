@@ -6,11 +6,14 @@ import InputError from "@/Components/InputError.vue";
 import TextInput from "@/Components/TextInput.vue";
 import NumericInput from "@/Components/NumericInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const props = defineProps<{
   title: string;
   form: InertiaForm<{ description: string; price: number }>;
 }>();
+
+defineEmits(['back', 'submit']);
 
 const form = useForm({
   description: "",
@@ -20,7 +23,7 @@ const form = useForm({
 <template>
   <section>
     <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-      <form @submit.prevent="$emit('submit')">
+      <form @submit.prevent="$emit('submit', $event)">
         <section>
           <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -30,32 +33,24 @@ const form = useForm({
 
           <div class="mt-6">
             <InputLabel for="description" :value="$t('Descrizione')" />
-            <TextInput
-              id="description"
-              type="text"
-              class="mt-1 block w-full"
-              v-model="props.form.description"
-              required
-              autofocus
-            />
+            <TextInput id="description" type="text" class="mt-1 block w-full" v-model="props.form.description" required
+              autofocus />
             <InputError class="mt-2" :message="props.form.errors.description" />
           </div>
           <div>
             <InputLabel for="price" :value="$t('Prezzo')" />
-            <NumericInput
-              id="price"
-              class="mt-1 block w-full"
-              v-model="props.form.price"
-              :options="{ currency: 'EUR' }" 
-              required
-            />
+            <NumericInput id="price" class="mt-1 block w-full" v-model="props.form.price" :options="{ currency: 'EUR' }"
+              required />
             <InputError class="mt-2" :message="props.form.errors.price" />
           </div>
 
           <div class="flex items-center gap-4 mt-4 flex justify-end">
-            <PrimaryButton :disabled="props.form.processing">{{
-              $t("form.create")
-            }}</PrimaryButton>
+            <slot name="footer">
+              <PrimaryButton :disabled="props.form.processing">{{
+                $t("form.create")
+              }}</PrimaryButton>
+              <SecondaryButton @click="$emit('back')">{{ $t('form.back') }}</SecondaryButton>
+            </slot>
           </div>
         </section>
       </form>

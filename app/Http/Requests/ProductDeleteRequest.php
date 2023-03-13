@@ -5,14 +5,14 @@ namespace App\Http\Requests;
 use Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProductCreateRequest extends FormRequest
+class ProductDeleteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Auth::user()->can('edit product');
+        return Auth::user()->can('delete product');
     }
 
     /**
@@ -23,8 +23,7 @@ class ProductCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'description' => 'required',
-            'price'  => 'required|numeric|decimal:0,2|min:0'
+            'id' => 'required|exists:products'
         ];
     }
 }

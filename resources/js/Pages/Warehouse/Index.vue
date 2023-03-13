@@ -1,21 +1,50 @@
 <script setup lang="ts">
 /** global route */
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net';
 import route from 'ziggy-js';
 import { createRequest } from '@/helper/datatable_defaults';
-import { Ref, ref } from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { goto } from '@/helper/gotourl';
+import Swal from 'sweetalert2';
+
+import $ from 'jquery';
 
 DataTable.use(DataTablesCore);
 
 const loading: Ref<boolean> = ref(true);
 
 const { t } = useI18n();
+const table = ref<any | null>(null);
+
+const handleActionButton = async (evt: MouseEvent) => {
+    const { action, id } = $(evt.target as HTMLElement).closest('button').data();
+    if (action === 'destroy') {
+        const response = await Swal.fire({
+            icon: 'question',
+            text: t('product.confirm_delete'),
+            showCancelButton: true,
+            cancelButtonText: t('form.cancel'),
+            focusCancel: true
+        });
+        if (response.isConfirmed) {
+            const form = useForm({ id })
+            form.delete(route(`product.${action}`, { id }), {
+                onSuccess: () => {
+                    table.value.dt.draw();
+                }
+            });
+            return;
+        }
+    } else {
+        goto(route(`product.${action}`, [id]));
+    }
+}
+
 
 const options = createRequest(
     route('warehouse.pagedata'),
@@ -23,8 +52,17 @@ const options = createRequest(
         columns: [
             { data: 'month', title: t('Mese') },
             { data: 'year', title: t('Anno') },
+            { data: 'action' }
         ]
     });
+
+
+onMounted(() => {
+    let dt = table.value.dt;
+
+    $(dt.table().body())
+        .on('click', 'button[data-action]', handleActionButton);
+});
 
 
 </script>
@@ -45,13 +83,7 @@ const options = createRequest(
                 </PrimaryButton>
             </div>
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <DataTable :options="options">
-                    <thead>
-                        <tr>
-                            <th>{{ $t('Mese') }}</th>
-                            <th>{{ $t('Anno') }}</th>
-                        </tr>
-                    </thead>
+                <DataTable :options="options" ref="table">
                 </DataTable>
             </div>
         </div>
