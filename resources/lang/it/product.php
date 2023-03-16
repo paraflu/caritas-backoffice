@@ -6,5 +6,8 @@ return [
     'insert' => 'Inserisci un nuovo prodotto',
     'edit' => 'Modifica',
     'delete' => 'Elimina',
-    'confirm_delete' => 'Sei sicuro di voler cancellare il prodotto selezionato?'
+    'confirm_delete' => 'Sei sicuro di voler cancellare il prodotto selezionato?',
+    'description' => 'Descrizione',
+    'price' => 'Prezzo',
+    'quantity' => 'Quantità',
 ];

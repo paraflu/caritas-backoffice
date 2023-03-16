@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WarehouseDetailController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -39,9 +40,24 @@ Route::prefix('/warehouse')
         Route::get('/create', [WarehouseController::class, 'create'])->name('create');
         Route::post('/create', [WarehouseController::class, 'store'])->name('store');
         Route::get('/edit/{warehouse}', [WarehouseController::class, 'edit'])->name('edit');
+        Route::get('/detail/{warehouse}', [WarehouseController::class, 'detail'])->name('detail');
         Route::put('/edit/{warehouse}', [WarehouseController::class, 'update'])->name('update');
         Route::delete('/delete/{warehouse}', [WarehouseController::class, 'destroy'])->name('destroy');
     });
+
+Route::prefix('/warehouse/detail')
+    ->middleware(['auth', 'verified'])->name('warehouse.detail.')
+    ->group(function () {
+//        Route::get('/', [WarehouseController::class, 'index'])->name('index');
+//        Route::post('/pagedata', [WarehouseController::class, 'pagedata'])->name('pagedata');
+//        Route::get('/create', [WarehouseController::class, 'create'])->name('create');
+        Route::post('/create', [WarehouseDetailController::class, 'store'])->name('store');
+//        Route::get('/edit/{warehouse}', [WarehouseController::class, 'edit'])->name('edit');
+//        Route::get('/detail/{warehouse}', [WarehouseController::class, 'detail'])->name('detail');
+//        Route::put('/edit/{warehouse}', [WarehouseController::class, 'update'])->name('update');
+//        Route::delete('/delete/{warehouse}', [WarehouseController::class, 'destroy'])->name('destroy');
+    });
+
 
 Route::prefix('/products')
     ->middleware(['auth', 'verified'])->name('product.')

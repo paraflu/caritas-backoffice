@@ -12,8 +12,11 @@ class WarehouseDetail extends Model
     use HasFactory;
 
     protected $fillable = [
+        'warehouse_id',
         'quantity',
         'origin',
+        'product_id',
+        'price'
     ];
 
     protected $casts = [

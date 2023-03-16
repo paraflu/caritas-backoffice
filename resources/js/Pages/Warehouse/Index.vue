@@ -26,14 +26,14 @@ const handleActionButton = async (evt: MouseEvent) => {
     if (action === 'destroy') {
         const response = await Swal.fire({
             icon: 'question',
-            text: t('product.confirm_delete'),
+            text: t('warehouse.confirm_delete'),
             showCancelButton: true,
             cancelButtonText: t('form.cancel'),
             focusCancel: true
         });
         if (response.isConfirmed) {
             const form = useForm({ id })
-            form.delete(route(`product.${action}`, { id }), {
+            form.delete(route(`warehouse.${action}`, { id }), {
                 onSuccess: () => {
                     table.value.dt.draw();
                 }
@@ -41,7 +41,7 @@ const handleActionButton = async (evt: MouseEvent) => {
             return;
         }
     } else {
-        goto(route(`product.${action}`, [id]));
+        goto(route(`warehouse.${action}`, [id]));
     }
 }
 
