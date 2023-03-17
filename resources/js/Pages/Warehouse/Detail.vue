@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <Head :title="title" />
 
     <AuthenticatedLayout>
@@ -26,7 +27,7 @@
               </div>
             </div>
             <div class="mr-2 flex flex-col md:items-end">
-              <InputLabel for="caritas" class="w-full text-left" :value="$t('warehouse.detail.gift')" />
+              <InputLabel for="caritas" class="w-full text-left" :value="$t('warehouse.detail.origin')" />
               <TextInput type="number" :min="0" v-model="productForm.gift" class="mr-2 w-20"></TextInput>
             </div>
             <div class="mr-2 flex flex-col  md:items-end">
@@ -43,17 +44,47 @@
           </div>
         </div>
         <div class="mb-4 text-black">
-          <DataTable :columns="columns" :data="data" class="text-black">
+          <DataTable :columns="columns" :data="data" class="text-black" ref="table">
             <thead>
-            <tr>
-              <th>{{ $t("product.type") }}</th>
-              <th>{{ $t("product.description") }}</th>
-              <th>{{ $t("product.quantity") }}</th>
-              <th>{{ $t("product.price") }}</th>
-            </tr>
+              <tr>
+                <th>{{ $t("product.type") }}</th>
+                <th>{{ $t("product.description") }}</th>
+                <th>{{ $t("product.quantity") }}</th>
+                <th>{{ $t("product.price") }}</th>
+                <th>{{ $t('warehouse.detail.action') }}</th>
+              </tr>
             </thead>
           </DataTable>
         </div>
+        <Modal :show="showModal" @close="closeModal">
+          <div class="p-6">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+              Are you sure you want to delete your account?
+            </h2>
+
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Once your account is deleted, all of its resources and data will be permanently deleted. Please
+              enter your password to confirm you would like to permanently delete your account.
+            </p>
+
+            <div class="mt-6">
+              <InputLabel for="password" value="Password" class="sr-only" />
+
+              <TextInput id="password" ref="passwordInput" v-model="form.password" type="password"
+                class="mt-1 block w-3/4" placeholder="Password" />
+
+              <InputError :message="form.errors.password" class="mt-2" />
+            </div>
+
+            <div class="mt-6 flex justify-end">
+              <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
+
+              <DangerButton class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Delete Account
+              </DangerButton>
+            </div>
+          </div>
+        </Modal>
         <template #footer>
           <PrimaryButton @click="onSubmit" class="mr-2">{{ $t("form.save") }}</PrimaryButton>
           <SecondaryButton @click="onReset">{{ $t("form.reset") }}</SecondaryButton>
@@ -74,8 +105,7 @@ import Card from "@/Components/Card.vue";
 import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net";
 
-import $ from "jquery";
-import { computed, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
@@ -84,13 +114,21 @@ import { currency } from "../../helper/currency";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import route from "ziggy-js";
+import { useDatatable } from "@/composable/useDatatable";
+import Swal from "sweetalert2";
+import { WarehouseService } from "@/services";
 
 DataTable.use(DataTablesCore);
 
 const { t } = useI18n();
+const table = ref<any | null>(null);
 const props = defineProps<{ status: string, warehouse: Warehouse, products: Product[], warehouse_details: WarehouseDetail[] }>();
 
 const elm = ref<{ product?: Product, quantity: number } | null>({ product: undefined, quantity: 0 });
+const showModal = ref(false);
+const title = ref(t("warehouse.detail_title", { month: props.warehouse.month, year: props.warehouse.year }));
+
+const { onAction, redraw } = useDatatable(table);
 
 const columns = [
   {
@@ -103,6 +141,11 @@ const columns = [
   {
     data: "price",
     render: (price: number) => currency(price)
+  },
+  {
+    data: 'action',
+    sortable: false,
+    title: ''
   }
 ];
 
@@ -123,6 +166,7 @@ productForm.defaults({
 const form = useForm<{ warehouse_id: number, details: Partial<WarehouseDetail>[] }>({
   warehouse_id: props.warehouse.id as number,
   details: props.warehouse_details.map(det => ({
+    id: det.id,
     origin: det.origin,
     product_id: det.product_id,
     quantity: det.quantity,
@@ -130,13 +174,57 @@ const form = useForm<{ warehouse_id: number, details: Partial<WarehouseDetail>[]
   }))
 });
 
+
+watchEffect(async () => {
+  if (onAction.value) {
+    const { action, id } = onAction.value;
+    console.log('action', action, 'id', id);
+    switch (action) {
+      case 'delete':
+        const response = await Swal.fire({ icon: 'question', text: t('warehouse.detail.confirm_delete'), showCancelButton: true, focusCancel: true });
+        if (response.isConfirmed) {
+          const ws = new WarehouseService();
+          // await ws.deleteDetail(Number(id));
+          redraw();
+        }
+        break;
+      case 'edit':
+        {
+
+        }
+
+      default:
+        break;
+    }
+  }
+});
+
+const buildActionButton = (it: Partial<WarehouseDetail>, product: Product) => {
+  return [
+    {
+      action: 'edit',
+      caption: t('warehouse.detail.edit'),
+      icon: `<i class="fa-solid fa-pen-to-square"></i>`
+    },
+    {
+      action: 'delete',
+      caption: t('warehouse.detail.delete'),
+      class: 'danger',
+      icon: '<i class="fa-solid fa-trash"></i>'
+    }
+  ].map(({ action, caption, icon, class: className }: { action: string, caption: string, class?: string, icon: string }) => {
+    return `<button data-action="${action}" data-id="${it.id}" class="btn btn-primary mr-2 ${className}" title="${caption}"><span class="">${icon}</span></button>`;
+  }).join('');
+}
+
 const data = computed(() => form.details.map(it => {
   const product = props.products.find(p => p.id == Number(it.product_id) as number) as Product;
   return {
     description: product.description,
     price: product.price,
     type: it.origin,
-    quantity: it.quantity
+    quantity: it.quantity,
+    action: `<div class="flex justify-end">${buildActionButton(it, product)}</div>`
   };
 }));
 
@@ -156,7 +244,12 @@ const addRow = () => {
   productForm.reset("id", "caritas", "gift");
 };
 
-const title = ref(t("warehouse.detail_title", { month: props.warehouse.month, year: props.warehouse.year }));
+
+
+
+const closeModal = () => {
+  showModal.value = false;
+}
 
 const onSubmit = () => {
   form.post(route("warehouse.detail.store"));
@@ -165,8 +258,7 @@ const onSubmit = () => {
 const onReset = () => {
   form.details = [];
 };
+
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

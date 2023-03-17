@@ -17,6 +17,7 @@ RUN mkdir -p /home/appuser && groupadd -g ${GID:-1000} appuser && \
     useradd -r -u ${UID:-1000} -g appuser appuser && \
     usermod -aG www-data appuser && \
     chown -R appuser:appuser /home/appuser
+
 WORKDIR /var/www/html
 RUN chown www-data.www-data -R /var/www/html && a2enmod rewrite
 

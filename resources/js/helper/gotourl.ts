@@ -1,1 +1,3 @@
-export const goto = (url: string) => window.location.href = url;
+import { router } from '@inertiajs/vue3'
+
+export const goto = (url: string) => router.visit(url);

@@ -19,6 +19,8 @@ return [
         'donation' => 'Donazione',
         'caritas' => 'Acquisto',
         'type' => 'Tipo',
-        'present' => 'Prodotto già presente in magazzino'
+        'present' => 'Prodotto già presente in magazzino',
+        'edit' => 'Modifica il prodotto',
+        'delete' => 'Elimina il prodotto'
     ]
 ];

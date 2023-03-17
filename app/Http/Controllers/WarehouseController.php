@@ -25,8 +25,17 @@ class WarehouseController extends Controller
         $warehouse = Warehouse::select('id', 'month', 'year');
 
         return DataTables::of($warehouse)
-            ->addColumn('action', fn($warehouse) => $this->buildActionColumns($warehouse, 'warehouse', function ($model) {
-                return '<button class="ml-2 btn btn-sm p-0 info" data-id="' . $model->id . '" data-action="detail" title="' . __('warehouse.details') . '"><div>' . Icons::detail() . '</div></button>';
+            ->addColumn('details', function ($row) {
+                return [
+                    'total' => $row->details->count(),
+                    'cost' => $row->details->map(fn ($it) => $it['quantity'] * $it['price'])->sum(),
+                    'group' => $row->details->groupBy('product_id')->map->sum('quantity')->map(fn ($it, $k) => [
+                        "product_id" => $k, "count" => $it
+                    ])->values()->toArray(),
+                ];
+            })
+            ->addColumn('action', fn ($warehouse) => $this->buildActionColumns($warehouse, 'warehouse', function ($model) {
+                return '<button class="ml-2 btn info" data-id="' . $model->id . '" data-action="detail" title="' . __('warehouse.details') . '"><div>' . Icons::detail() . '</div></button>';
             }))
             ->toJson();
     }
@@ -83,5 +92,4 @@ class WarehouseController extends Controller
             'products' => Product::all()
         ]);
     }
-
 }

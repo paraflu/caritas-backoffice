@@ -1,6 +1,13 @@
 import "./bootstrap";
 import "../css/app.css";
 
+import '@fortawesome/fontawesome-free/scss/fontawesome.scss';
+import '@fortawesome/fontawesome-free/scss/brands.scss';
+import '@fortawesome/fontawesome-free/scss/regular.scss';
+import '@fortawesome/fontawesome-free/scss/solid.scss';
+import '@fortawesome/fontawesome-free/scss/v4-shims.scss';
+
+
 import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
@@ -8,6 +15,7 @@ import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import { createI18n } from "vue-i18n";
 import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+
 
 import { defineRule } from "vee-validate";
 import { required, email, min } from "@vee-validate/rules";

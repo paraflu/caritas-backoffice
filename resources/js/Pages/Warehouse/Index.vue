@@ -13,6 +13,7 @@ import { goto } from '@/helper/gotourl';
 import Swal from 'sweetalert2';
 
 import $ from 'jquery';
+import { currency } from '@/helper/currency';
 
 DataTable.use(DataTablesCore);
 
@@ -52,6 +53,8 @@ const options = createRequest(
         columns: [
             { data: 'month', title: t('Mese') },
             { data: 'year', title: t('Anno') },
+            { data: 'details.total', title: t('Numero prodotti'), class: "text-right" },
+            { data: 'details.cost', title: t('Totale'), class: "text-right", render: (data: number) => currency(data) },
             { data: 'action' }
         ]
     });

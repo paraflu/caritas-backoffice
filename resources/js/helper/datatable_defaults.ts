@@ -3,6 +3,7 @@ import { Config } from 'datatables.net';
 
 export const createRequest = (url: string, options = {}): Config => {
     const token = (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement).attributes['content'].value;
+    
     return {
         serverSide: true,
         processing: true,
