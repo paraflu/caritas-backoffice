@@ -32,6 +32,16 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+Route::prefix('/warehouse_detail')
+    ->middleware(['auth', 'verified'])
+    ->name('warehouse.detail.')
+    ->group(function () {
+        Route::post('/create', [WarehouseDetailController::class, 'store'])->name('store');
+        Route::delete('/delete/{warehouse_detail}', [WarehouseDetailController::class, 'destroy'])->name('destroy');
+        Route::post('/{warehouse}', [WarehouseDetailController::class, 'index'])->name('index');
+    });
+
 Route::prefix('/warehouse')
     ->middleware(['auth', 'verified'])->name('warehouse.')
     ->group(function () {
@@ -44,20 +54,6 @@ Route::prefix('/warehouse')
         Route::put('/edit/{warehouse}', [WarehouseController::class, 'update'])->name('update');
         Route::delete('/delete/{warehouse}', [WarehouseController::class, 'destroy'])->name('destroy');
     });
-
-Route::prefix('/warehouse/detail')
-    ->middleware(['auth', 'verified'])->name('warehouse.detail.')
-    ->group(function () {
-//        Route::get('/', [WarehouseController::class, 'index'])->name('index');
-//        Route::post('/pagedata', [WarehouseController::class, 'pagedata'])->name('pagedata');
-//        Route::get('/create', [WarehouseController::class, 'create'])->name('create');
-        Route::post('/create', [WarehouseDetailController::class, 'store'])->name('store');
-//        Route::get('/edit/{warehouse}', [WarehouseController::class, 'edit'])->name('edit');
-//        Route::get('/detail/{warehouse}', [WarehouseController::class, 'detail'])->name('detail');
-//        Route::put('/edit/{warehouse}', [WarehouseController::class, 'update'])->name('update');
-//        Route::delete('/delete/{warehouse}', [WarehouseController::class, 'destroy'])->name('destroy');
-    });
-
 
 Route::prefix('/products')
     ->middleware(['auth', 'verified'])->name('product.')

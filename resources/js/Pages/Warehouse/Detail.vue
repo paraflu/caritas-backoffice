@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <Head :title="title" />
+    <Head :title="title"></Head>
 
     <AuthenticatedLayout>
       <template #header>
@@ -22,7 +22,7 @@
                   {{ currency(prod.price) }} )
                 </option>
               </SelectInput>
-              <div class="text-orange-200" v-if="form.details.find(d => d.product_id === productForm.id)">
+              <div class="text-orange-200" v-if="details.includes(Number(productForm.id))">
                 {{ $t("warehouse.detail.present") }}
               </div>
             </div>
@@ -44,18 +44,9 @@
           </div>
         </div>
         <div class="mb-4 text-black">
-          <DataTable :columns="columns" :data="data" class="text-black" ref="table">
-            <thead>
-              <tr>
-                <th>{{ $t("product.type") }}</th>
-                <th>{{ $t("product.description") }}</th>
-                <th>{{ $t("product.quantity") }}</th>
-                <th>{{ $t("product.price") }}</th>
-                <th>{{ $t('warehouse.detail.action') }}</th>
-              </tr>
-            </thead>
-          </DataTable>
+          <DataTable :options="options" class="text-black" ref="table"></DataTable>
         </div>
+
         <Modal :show="showModal" @close="closeModal">
           <div class="p-6">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -103,49 +94,91 @@ import { WarehouseDetail } from "@/types/warehousedetail";
 import { useI18n } from "vue-i18n";
 import Card from "@/Components/Card.vue";
 import DataTable from "datatables.net-vue3";
-import DataTablesCore from "datatables.net";
+import DataTablesCore, { Config } from "datatables.net";
 
-import { computed, ref, watchEffect } from "vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import TextInput from "@/Components/TextInput.vue";
-import InputError from "@/Components/InputError.vue";
-import SelectInput from "@/Components/SelectInput.vue";
+import { defineAsyncComponent, nextTick, onMounted, ref, watchEffect } from "vue";
+
 import { currency } from "../../helper/currency";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import SecondaryButton from "@/Components/SecondaryButton.vue";
 import route from "ziggy-js";
-import { useDatatable } from "@/composable/useDatatable";
+import { Action, useDatatable } from "@/composable/useDatatable";
 import Swal from "sweetalert2";
 import { WarehouseService } from "@/services";
+import { reportError } from "@/helper/reporterror";
+import { createRequest } from "@/helper/datatable_defaults";
+import { useCsrf } from "@/composable/usecsrf";
+const Modal = defineAsyncComponent(() => import("@/Components/Modal.vue"));
+const InputLabel = defineAsyncComponent(() => import("@/Components/InputLabel.vue"));
+const TextInput = defineAsyncComponent(() => import("@/Components/TextInput.vue"));
+const InputError = defineAsyncComponent(() => import("@/Components/InputError.vue"));
+const SelectInput = defineAsyncComponent(() => import("@/Components/SelectInput.vue"));
+const PrimaryButton = defineAsyncComponent(() => import("@/Components/PrimaryButton.vue"));
+const SecondaryButton = defineAsyncComponent(() => import("@/Components/SecondaryButton.vue"));
 
 DataTable.use(DataTablesCore);
 
 const { t } = useI18n();
 const table = ref<any | null>(null);
-const props = defineProps<{ status: string, warehouse: Warehouse, products: Product[], warehouse_details: WarehouseDetail[] }>();
+const props = defineProps<{ status: string, errors?: object, warehouse: Warehouse, products: Product[], warehouse_details: WarehouseDetail[] }>();
 
 const elm = ref<{ product?: Product, quantity: number } | null>({ product: undefined, quantity: 0 });
+
 const showModal = ref(false);
 const title = ref(t("warehouse.detail_title", { month: props.warehouse.month, year: props.warehouse.year }));
+const ws = new WarehouseService();
 
-const { onAction, redraw } = useDatatable(table);
+const details = ref<Array<number>>([]);
+const { csrf } = useCsrf();
+
+watchEffect(() => {
+  if (props.errors && Object.values(props.errors).length) {
+    reportError({ message: Object.values(props.errors) });
+  }
+})
+
+const onActionCallback = async ({ action, id }: Action) => {
+  console.log('action', action, 'id', id);
+  switch (action) {
+    case 'destroy':
+      const response = await Swal.fire({ icon: 'question', text: t('warehouse.detail.confirm_delete'), showCancelButton: true, focusCancel: true });
+      if (response.isConfirmed) {
+        try {
+          await ws.deleteDetail(Number(id));
+          redraw()
+        } catch (err) {
+          console.error(err);
+          reportError(err);
+        }
+      }
+      break;
+    case 'edit':
+      {
+
+      }
+
+    default:
+      break;
+  }
+}
+
+const { redraw, dtInstance } = useDatatable(table, onActionCallback);
 
 const columns = [
   {
-    data: "type",
+    data: "origin",
     render: (data: string) => t(`warehouse.detail.${data}`),
     title: t("warehouse.detail.type")
   },
-  { data: "description" },
+  { data: "product.description", name: 'product.description' },
   { data: "quantity" },
+  { data: "id" },
   {
     data: "price",
     render: (price: number) => currency(price)
   },
   {
     data: 'action',
-    sortable: false,
-    title: ''
+    title: '',
+    sortable: false
   }
 ];
 
@@ -163,101 +196,84 @@ productForm.defaults({
   gift: ""
 });
 
-const form = useForm<{ warehouse_id: number, details: Partial<WarehouseDetail>[] }>({
-  warehouse_id: props.warehouse.id as number,
-  details: props.warehouse_details.map(det => ({
-    id: det.id,
-    origin: det.origin,
-    product_id: det.product_id,
-    quantity: det.quantity,
-    price: det.price
-  }))
-});
-
-
-watchEffect(async () => {
-  if (onAction.value) {
-    const { action, id } = onAction.value;
-    console.log('action', action, 'id', id);
-    switch (action) {
-      case 'delete':
-        const response = await Swal.fire({ icon: 'question', text: t('warehouse.detail.confirm_delete'), showCancelButton: true, focusCancel: true });
-        if (response.isConfirmed) {
-          const ws = new WarehouseService();
-          // await ws.deleteDetail(Number(id));
-          redraw();
-        }
-        break;
-      case 'edit':
-        {
-
-        }
-
-      default:
-        break;
-    }
-  }
-});
-
-const buildActionButton = (it: Partial<WarehouseDetail>, product: Product) => {
-  return [
-    {
-      action: 'edit',
-      caption: t('warehouse.detail.edit'),
-      icon: `<i class="fa-solid fa-pen-to-square"></i>`
-    },
-    {
-      action: 'delete',
-      caption: t('warehouse.detail.delete'),
-      class: 'danger',
-      icon: '<i class="fa-solid fa-trash"></i>'
-    }
-  ].map(({ action, caption, icon, class: className }: { action: string, caption: string, class?: string, icon: string }) => {
-    return `<button data-action="${action}" data-id="${it.id}" class="btn btn-primary mr-2 ${className}" title="${caption}"><span class="">${icon}</span></button>`;
-  }).join('');
-}
-
-const data = computed(() => form.details.map(it => {
-  const product = props.products.find(p => p.id == Number(it.product_id) as number) as Product;
-  return {
-    description: product.description,
-    price: product.price,
-    type: it.origin,
-    quantity: it.quantity,
-    action: `<div class="flex justify-end">${buildActionButton(it, product)}</div>`
-  };
-}));
+interface FormDetail {
+  warehouse_id: number,
+  product_id: number,
+  origin: 'caritas' | 'donation',
+  price: number,
+  quantity: number
+};
 
 const addRow = () => {
-  // prima cancello tutte le occorrenze
-
-  form.details = form.details.filter(({ product_id }) => product_id !== productForm.id);
-
   const { id: product_id, price } = props.products.find(it => it.id === Number(productForm.id)) as Product;
-
+  const formInsert = useForm<{ warehouse_id: number, details: FormDetail[] }>({ warehouse_id: props.warehouse.id!, details: [] });
+  const payload: FormDetail[] = [];
   if (productForm.caritas) {
-    form.details.push({ product_id, quantity: productForm.caritas, origin: "caritas", price });
+    payload.push({
+      warehouse_id: props.warehouse.id as number,
+      product_id: product_id as number,
+      quantity: Number(productForm.caritas),
+      origin: 'caritas',
+      price
+    })
   }
   if (productForm.gift) {
-    form.details.push({ product_id, quantity: productForm.gift, origin: "donation", price });
+    payload.push({
+      warehouse_id: props.warehouse.id as number,
+      product_id: product_id as number,
+      quantity: Number(productForm.gift),
+      origin: 'donation',
+      price
+    })
   }
-  productForm.reset("id", "caritas", "gift");
+
+  formInsert.details = payload;
+  formInsert.post(
+    route('warehouse.detail.store'),
+    {
+      onSuccess: () => {
+        productForm.reset("id", "caritas", "gift");
+        redraw();
+      },
+    }
+  )
 };
 
 
+const options: Config = createRequest(route('warehouse.detail.index', { id: props.warehouse.id as number }), {
+  columns,
+  ajax: (req, callback) => {
+    ws.detail(props.warehouse.id!, req).then(data => {
+      details.value = data.data.map((r: any) => r.product.id);
+      callback(data);
+    });
+
+
+    //   console.log(_data, data, callback);
+    //   details.value = data.data;
+    //   callback(data);
+    // })
+    //  route('warehouse.detail.index', { id: props.warehouse.id as number }),
+    // headers: { 'X-CSRF-TOKEN': csrf.value },
+    // method: 'POST',
+    // success: (e) => {
+    //   console.info(e);
+    // }
+  }
+});
 
 
 const closeModal = () => {
   showModal.value = false;
 }
 
-const onSubmit = () => {
-  form.post(route("warehouse.detail.store"));
-};
+// const onSubmit = () => {
+//   form.post(route("warehouse.detail.store"));
+// };
 
-const onReset = () => {
-  form.details = [];
-};
+// const onReset = () => {
+//   form.details = [];
+// };
 
 </script>
 

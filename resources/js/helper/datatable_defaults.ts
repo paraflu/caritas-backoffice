@@ -1,9 +1,14 @@
 import route from 'ziggy-js';
 import { Config } from 'datatables.net';
 
-export const createRequest = (url: string, options = {}): Config => {
+export const createRequest = (url: string, options: Partial<Config> = {}): Config => {
+
     const token = (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement).attributes['content'].value;
-    
+
+    if (!token) {
+        console.warn('[createRequest] impossibile recuperare il token')
+    }
+
     return {
         serverSide: true,
         processing: true,

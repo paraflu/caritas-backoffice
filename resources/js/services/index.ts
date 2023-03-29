@@ -1,2 +1,2 @@
-// import { WarehouseService } from './warehouse';
-// export { WarehouseService}
+import { WarehouseService } from './warehouse';
+export { WarehouseService }

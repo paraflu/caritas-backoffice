@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ProductOriginEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class WarehouseDetail extends Model
@@ -23,13 +24,13 @@ class WarehouseDetail extends Model
         'origin' => ProductOriginEnum::class,
     ];
 
-    public function warehouse()
+    public function warehouse(): BelongsTo
     {
-        return $this->hasOne(Warehouse::class);
+        return $this->belongsTo(Warehouse::class);
     }
 
-    public function product(): HasOne
+    public function product(): BelongsTo
     {
-        return $this->hasOne(Product::class);
+        return $this->belongsTo(Product::class);
     }
 }

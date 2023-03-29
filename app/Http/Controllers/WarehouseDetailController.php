@@ -2,14 +2,31 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Helpers\Icons;
+use App\Models\Warehouse;
 use App\Models\WarehouseDetail;
+use App\Traits\HasActionColumn;
+use DataTables;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
 class WarehouseDetailController extends Controller
 {
+
+    use HasActionColumn;
+
+    public function index(Request $request, Warehouse $warehouse)
+    {
+        if ($request->ajax()) {
+            $query = WarehouseDetail::with(['product'])->where('warehouse_id', $warehouse->id);
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('action', fn ($model) => $this->buildActionColumns($model, 'warehouse.detail', noinsert: true))
+                ->toJson();
+        }
+    }
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -25,7 +42,9 @@ class WarehouseDetailController extends Controller
         $data = $request->only('details');
 
         // faccio pulizia prima
-        WarehouseDetail::where('warehouse_id', $warehouse_id)->delete();
+        WarehouseDetail::where('warehouse_id', $warehouse_id)
+            ->whereIn('product_id', collect($data['details'])->pluck('product_id'))
+            ->delete();
 
         foreach ($data['details'] as $detail) {
             WarehouseDetail::create([
@@ -36,6 +55,12 @@ class WarehouseDetailController extends Controller
                 'origin' => $detail['origin']
             ]);
         }
-        return Redirect::route('warehouse.index');
+        return Redirect::back();
+    }
+
+    public function destroy(Request $request, WarehouseDetail $warehouseDetail)
+    {
+        $warehouseDetail->delete();
+        return $request->ajax() ? response()->json(['success' => true]) : Redirect::route('warehouse_detail.index');
     }
 }

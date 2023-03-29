@@ -19,8 +19,10 @@ return [
         'donation' => 'Donazione',
         'caritas' => 'Acquisto',
         'type' => 'Tipo',
+        'origin' => 'Origine',
         'present' => 'Prodotto già presente in magazzino',
         'edit' => 'Modifica il prodotto',
-        'delete' => 'Elimina il prodotto'
+        'delete' => 'Elimina il prodotto',
+        'confirm_delete' => 'Sei sicuro di voler cancellare il record?'
     ]
 ];
