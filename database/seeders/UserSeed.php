@@ -18,6 +18,10 @@ class UserSeed extends Seeder
         $admin = Permission::firstWhere('name', 'admin') ?? Permission::create(['name' => 'admin']);
         $editProduct = Permission::firstWhere('name', 'edit product') ?? Permission::create(['name' => 'edit product']);
         $deleteProduct = Permission::firstWhere('name', 'delete product') ?? Permission::create(['name' => 'delete product']);
+
+        $deleteUser = Permission::firstWhere('name', 'delete user') ?? Permission::create(['name' => 'delete user']);
+        $editUser = Permission::firstWhere('name', 'edit user') ?? Permission::create(['name' => 'edit user']);
+
         $user = User::firstWhere('name', 'Admin') ?? User::create(
             [
                 'name' => 'Admin',
@@ -27,6 +31,11 @@ class UserSeed extends Seeder
         );
 
         $user->givePermissionTo($admin);
-        $user->givePermissionTo($editProduct, $deleteProduct);
+        $user->givePermissionTo(
+            $editProduct,
+            $deleteProduct,
+            $editUser,
+            $deleteUser
+        );
     }
 }

@@ -1,44 +1,53 @@
 import { onMounted, Ref, ref } from "vue";
-import $ from "jquery";
 import { Api } from "datatables.net";
+import JQuery from "jquery";
 
 export interface Action {
-  action?: string,
-  id?: number,
-  event?: Event
-  dtInstance: Api<any> | null
+  action?: string;
+  id?: string;
+  event: Event | JQuery.Event;
+  row?: any;
 }
 
 export type ActionCallback = (action: Action) => void;
 
-export function useDatatable(tableRef: Ref<HTMLTableElement | null>, callback?: ActionCallback) {
-
-  const dtInstance = ref<Api<any> | null>(null);
+export function useDatatable(
+  tableRef: Ref<HTMLElement | null>,
+  callback?: ActionCallback,
+  eventsName: string[] = []
+) {
   const onAction = ref<Action | null>(null);
 
-  const handleActionButton = (event: JQuery.TriggeredEvent) => {
-    const { action, id } = (event.currentTarget as HTMLButtonElement).dataset;
-    onAction.value = {
-      action,
-      id: Number(id),
-      event: event.originalEvent,
-      dtInstance: dtInstance.value
-    };
-    callback?.(onAction.value);
+  const dtInstance = ref<Api<any> | null>(null);
+
+  const handleActionButton = (event: JQuery.ClickEvent, row: any) => {
+    const { action, id } = (event.currentTarget as HTMLElement).dataset;
+    onAction.value = { action, id, event, row };
+    callback?.(onAction.value!);
+  };
+
+  const eventHanlder = (evtName: string, event: Event) => {
+    callback?.({ event, action: evtName });
   };
 
   onMounted(() => {
     dtInstance.value = (tableRef.value as any).dt;
     if (dtInstance.value) {
-      $(dtInstance.value.table().body())
-        .on("click", "button[data-action]", handleActionButton);
+      JQuery((dtInstance.value as any).table().body()).on(
+        "click",
+        "a[data-action],button[data-action]",
+        function (e) {
+          const row = dtInstance.value?.row(JQuery(this).closest("tr")).data();
+          handleActionButton(e, row);
+        }
+      );
     }
+    eventsName.forEach((evtName) =>
+      dtInstance.value?.on(evtName, (e) => eventHanlder(evtName, e))
+    );
   });
 
+  const redraw = () => dtInstance.value?.draw();
 
-  return {
-    onAction,
-    redraw: () => dtInstance.value?.draw(),
-    dtInstance
-  };
+  return { onAction, redraw, dtInstance };
 }

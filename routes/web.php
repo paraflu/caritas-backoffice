@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseDetailController;
 use Illuminate\Foundation\Application;
@@ -32,6 +33,16 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::prefix('/users')
+    ->middleware(['auth', 'verified'])
+    ->name('users.')
+    ->group(function () {
+        Route::get('', [UserController::class, 'index'])->name('index');
+        Route::get('create', [UserController::class, 'create'])->name('create');
+        Route::get('{user}', [UserController::class, 'edit'])->name('edit');
+        Route::post('pagedata', [UserController::class, 'pagedata'])->name('pagedata');
+        Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
 
 Route::prefix('/warehouse_detail')
     ->middleware(['auth', 'verified'])
