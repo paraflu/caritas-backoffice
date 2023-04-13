@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Traits\HasActionColumn;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -26,7 +27,7 @@ class UserController extends Controller
 
     public function edit(User $user): Response
     {
-        return Inertia::render('Users/Create', compact('user'));
+        return Inertia::render('Users/Edit', compact('user'));
     }
 
     public function pagedata(Request $request): JsonResponse
@@ -44,5 +45,11 @@ class UserController extends Controller
     public function destroy(Request $request, User $user)
     {
         $user->delete();
+    }
+
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        $user->update($request->only('name', 'password', 'email'));
+        return response()->redirectToRoute('users.index');
     }
 }

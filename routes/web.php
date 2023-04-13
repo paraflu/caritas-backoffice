@@ -41,6 +41,7 @@ Route::prefix('/users')
         Route::get('create', [UserController::class, 'create'])->name('create');
         Route::get('{user}', [UserController::class, 'edit'])->name('edit');
         Route::post('pagedata', [UserController::class, 'pagedata'])->name('pagedata');
+        Route::put('update/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
     });
 

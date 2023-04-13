@@ -7,6 +7,7 @@ export interface Action {
   id?: string;
   event: Event | JQuery.Event;
   row?: any;
+  payload?: any;
 }
 
 export type ActionCallback = (action: Action) => void;
@@ -26,8 +27,8 @@ export function useDatatable(
     callback?.(onAction.value!);
   };
 
-  const eventHanlder = (evtName: string, event: Event) => {
-    callback?.({ event, action: evtName });
+  const eventHanlder = (evtName: string, event: Event, payload: any) => {
+    callback?.({ event, action: evtName, payload });
   };
 
   onMounted(() => {
@@ -43,7 +44,7 @@ export function useDatatable(
       );
     }
     eventsName.forEach((evtName) =>
-      dtInstance.value?.on(evtName, (e) => eventHanlder(evtName, e))
+      dtInstance.value?.on(evtName, (e, ...args) => eventHanlder(evtName, e, args))
     );
   });
 

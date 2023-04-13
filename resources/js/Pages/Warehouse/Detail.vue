@@ -46,7 +46,7 @@
         <div class="mb-4 text-black">
           <DataTable :options="options" class="text-black" ref="table"></DataTable>
         </div>
-
+        <!-- 
         <Modal :show="showModal" @close="closeModal">
           <div class="p-6">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -75,11 +75,11 @@
               </DangerButton>
             </div>
           </div>
-        </Modal>
-        <template #footer>
+        </Modal> -->
+        <!-- <template #footer>
           <PrimaryButton @click="onSubmit" class="mr-2">{{ $t("form.save") }}</PrimaryButton>
           <SecondaryButton @click="onReset">{{ $t("form.reset") }}</SecondaryButton>
-        </template>
+        </template> -->
       </Card>
     </AuthenticatedLayout>
   </div>
@@ -95,10 +95,11 @@ import { useI18n } from "vue-i18n";
 import Card from "@/Components/Card.vue";
 import DataTable from "datatables.net-vue3";
 import DataTablesCore, { Config } from "datatables.net";
+import Select from 'datatables.net-select';
 
 import { defineAsyncComponent, nextTick, onMounted, ref, watchEffect } from "vue";
 
-import { currency } from "../../helper/currency";
+import { currency } from "@/helper/currency";
 import route from "ziggy-js";
 import { Action, useDatatable } from "@/composable/useDatatable";
 import Swal from "sweetalert2";
@@ -115,6 +116,7 @@ const PrimaryButton = defineAsyncComponent(() => import("@/Components/PrimaryBut
 const SecondaryButton = defineAsyncComponent(() => import("@/Components/SecondaryButton.vue"));
 
 DataTable.use(DataTablesCore);
+DataTable.use(Select);
 
 const { t } = useI18n();
 const table = ref<any | null>(null);
@@ -135,7 +137,7 @@ watchEffect(() => {
   }
 })
 
-const onActionCallback = async ({ action, id }: Action) => {
+const onActionCallback = async ({ action, id, event, payload }: Action) => {
   console.log('action', action, 'id', id);
   switch (action) {
     case 'destroy':
@@ -150,17 +152,19 @@ const onActionCallback = async ({ action, id }: Action) => {
         }
       }
       break;
-    case 'edit':
-      {
-
-      }
-
+    case 'select':
+      const [dt, type, indexes] = payload;
+      const rowData = dt.row(indexes[0]).data();
+      productForm.id = rowData.product_id;
+      productForm.gift = rowData.origin === 'donation' ? rowData.quantity : 0;
+      productForm.caritas = rowData.origin === 'caritas' ? rowData.quantity : 0;
+      break;
     default:
       break;
   }
 }
 
-const { redraw, dtInstance } = useDatatable(table, onActionCallback);
+const { redraw, dtInstance } = useDatatable(table, onActionCallback, ['select']);
 
 const columns = [
   {
@@ -242,23 +246,14 @@ const addRow = () => {
 
 const options: Config = createRequest(route('warehouse.detail.index', { id: props.warehouse.id as number }), {
   columns,
+  select: {
+    style: 'single'
+  },
   ajax: (req, callback) => {
     ws.detail(props.warehouse.id!, req).then(data => {
-      details.value = data.data.map((r: any) => r.product.id);
+      details.value = (data as any).data.map((r: any) => r.product.id);
       callback(data);
     });
-
-
-    //   console.log(_data, data, callback);
-    //   details.value = data.data;
-    //   callback(data);
-    // })
-    //  route('warehouse.detail.index', { id: props.warehouse.id as number }),
-    // headers: { 'X-CSRF-TOKEN': csrf.value },
-    // method: 'POST',
-    // success: (e) => {
-    //   console.info(e);
-    // }
   }
 });
 
@@ -277,4 +272,8 @@ const closeModal = () => {
 
 </script>
 
-<style scoped></style>
+<style lang="scss">
+tr {
+  cursor: pointer
+}
+</style>

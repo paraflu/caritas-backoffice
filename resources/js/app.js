@@ -19,6 +19,8 @@ import { defineRule } from "vee-validate";
 import { required, email, min } from "@vee-validate/rules";
 import { plugin as pluginFormkit, defaultConfig } from "@formkit/vue";
 import { generateClasses } from "@formkit/themes";
+import { it } from "@formkit/i18n";
+import config from "./formkit.config";
 
 defineRule("required", required);
 defineRule("email", email);
@@ -60,15 +62,9 @@ createInertiaApp({
       .use(
         pluginFormkit,
         defaultConfig({
-          config: {
-            classes: generateClasses({
-              global: {
-                outer: "mb-4",
-                input: "border rounded dark:bg-gray-800 dark:border-gray-600",
-                button: "px-2 border-red-400",
-              },
-            }),
-          },
+          locales: [it],
+          locale: 'it',
+          ...config
         })
       )
       .mount(el);

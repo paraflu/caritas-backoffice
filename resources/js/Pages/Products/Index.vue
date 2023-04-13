@@ -2,7 +2,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm } from "@inertiajs/vue3";
 import DataTable from "datatables.net-vue3";
-// import DataTablesCore from "datatables.net";
+import DataTablesCore from "datatables.net";
 import route from "ziggy-js";
 import { createRequest } from "@/helper/datatable_defaults";
 import { inject, onMounted, Ref, ref } from "vue";
@@ -14,7 +14,7 @@ import { currency } from "@/helper/currency";
 import $ from "jquery";
 import Swal from "sweetalert2";
 
-// DataTable.use(DataTablesCore);
+DataTable.use(DataTablesCore);
 
 defineProps<{ canCreate?: boolean }>();
 
@@ -70,17 +70,13 @@ const options = createRequest(route("product.pagedata"), {
 
   <AuthenticatedLayout>
     <template #header>
-      <h2
-        class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
-      >
+      <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
         {{ $t("product.title") }}
       </h2>
     </template>
 
     <div class="py-12">
-      <div
-        class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 flex justify-end mb-4"
-      >
+      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 flex justify-end mb-4">
         <PrimaryButton v-if="canCreate" @click="goto(route('product.create'))">
           {{ $t("product.insert") }}
         </PrimaryButton>

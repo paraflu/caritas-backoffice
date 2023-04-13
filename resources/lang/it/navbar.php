@@ -6,5 +6,8 @@ return [
     'products' => 'Prodotti',
     'warehouse' => 'Pacco alimentare',
     'profile' => 'Profilo',
-    'logout' => 'Disconnetti'
+    'logout' => 'Disconnetti',
+    'dark' => 'Dark',
+    'light' => 'Light',
+    'system' => 'System'
 ];

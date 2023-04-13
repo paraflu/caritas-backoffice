@@ -7,11 +7,6 @@ import { DateTime } from "luxon";
 import WarehouseForm from "./Partial/Form.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
-// import InputLabel from "@/Components/InputLabel.vue";
-// import TextInput from "@/Components/TextInput.vue";
-// import PrimaryButton from "@/Components/PrimaryButton.vue";
-// import SecondaryButton from "@/Components/SecondaryButton.vue";
-// import { validate } from "@/helper/validate";
 
 const { t } = useI18n();
 const props = defineProps<{ status?: string, allow_resume: boolean, data: { id: number, month: number, year: number } }>();
@@ -53,11 +48,10 @@ const maxYear = DateTime.now().year + 1;
         <section>
           <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
             <WarehouseForm :form="form" :action="route('warehouse.edit', [form.id])" :title="$t('warehouse.edit_title')"
-                           @submit.prevent="onSubmit()">
+              @submit.prevent="onSubmit()">
               <input type="hidden" :value="data.id">
               <div class="flex items-center justify-end mt-4">
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
-                               :disabled="form.processing">
+                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                   {{ $t("form.save") }}
                 </PrimaryButton>
                 <SecondaryButton class="ml-4" type="reset" :disabled="form.processing">
