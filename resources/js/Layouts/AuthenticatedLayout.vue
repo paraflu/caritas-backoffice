@@ -58,15 +58,19 @@ onMounted(() => {
                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                   {{ $t("navbar.dashboard") }}
                 </NavLink>
-                <!-- <NavLink :href="route('warehouse.index')" :active="route().current('warehouse.index')">
-                    {{ $t("navbar.warehouse") }}
-                  </NavLink> -->
+                <NavLink :href="route('customer.index')" :active="route().current('customer.index')">
+                  {{ $t("navbar.customer") }}
+                </NavLink>
                 <NavLink :href="route('product.index')" :active="route().current('product.index')">
                   {{ $t("navbar.products") }}
                 </NavLink>
                 <NavLink :href="route('users.index')" :active="route().current('users.index')">
                   {{ $t("navbar.users") }}
                 </NavLink>
+                <NavLink :href="route('foodparcel.index')" :active="route().current('foodparcel.index')">
+                  {{ $t("navbar.foodparcel") }}
+                </NavLink>
+
               </div>
             </div>
 
@@ -205,8 +209,8 @@ onMounted(() => {
                   </template>
 
                   <template #content>
-                  <DropdownLink :href="route('profile.edit')">
-                    {{ $t("navbar.profile") }}
+                    <DropdownLink :href="route('profile.edit')">
+                      {{ $t("navbar.profile") }}
                     </DropdownLink>
                     <DropdownLink :href="route('logout')" method="post" as="button">
                       {{ $t("navbar.logout") }}
@@ -241,18 +245,23 @@ onMounted(() => {
           hidden: !showingNavigationDropdown,
         }" class="sm:hidden">
           <div class="pt-2 pb-3 space-y-1">
+
             <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
               {{ $t("navbar.dashboard") }}
             </ResponsiveNavLink>
-            <!-- <ResponsiveNavLink :href="route('warehouse.index')" :active="route().current('warehouse.index')">
-                {{ $t("navbar.warehouse") }}
-              </ResponsiveNavLink> -->
+            <ResponsiveNavLink :href="route('customer.index')" :active="route().current('customer.index')">
+              {{ $t("navbar.customer") }}
+            </ResponsiveNavLink>
             <ResponsiveNavLink :href="route('product.index')" :active="route().current('product.index')">
               {{ $t("navbar.products") }}
             </ResponsiveNavLink>
             <ResponsiveNavLink :href="route('users.index')" :active="route().current('users.index')">
               {{ $t("navbar.users") }}
             </ResponsiveNavLink>
+            <ResponsiveNavLink :href="route('foodparcel.index')" :active="route().current('foodparcel.index')">
+              {{ $t("navbar.foodparcel") }}
+            </ResponsiveNavLink>
+
           </div>
 
           <!-- Responsive Settings Options -->

@@ -6,30 +6,35 @@
           {{ title }}
         </h2>
       </header>
-      <FormKit type="form" @submit="$emit('submit', form)">
-        <FormKit type="text" name="name" :label="$t('user.name')" v-model="form.name" validation="required"></FormKit>
-        <FormKit type="password" name="password" :label="$t('user.password')" v-model="form.password"
-          validation="required">
+      <FormKit type="form" @submit="$emit('submit')" :value="form">
+        <FormKit type="text" name="name" :label="$t('user.name')" validation="required"></FormKit>
+        <FormKit type="password" name="password" :label="$t('user.password')"
+          validation="required|length:6|matches:/[^a-zA-Z]/">
         </FormKit>
-        <FormKit type="text" name="email" :label="$t('user.email')" v-model="form.email" validation="required"></FormKit>
+        <FormKit v-if="!form.id" type="password" name="password_confirm" :label="$t('user.confirm')"
+          validation="required|confirm">
+        </FormKit>
+        <FormKit type="text" name="email" :label="$t('user.email')" validation="required">
+        </FormKit>
       </FormKit>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { router, useForm } from "@inertiajs/vue3";
-import route from "ziggy-js";
+import { useForm } from "@inertiajs/vue3";
+
+defineEmits(['submit']);
 
 const props = defineProps<{ model?: any; title: string }>();
 
-const form = useForm<{ id?: number, name: string, password: string, email: string }>({
+const form = useForm<{ id?: number, name: string, password: string, email: string, confirm?: string }>({
   id: props.model?.id,
   name: props.model?.name,
-  password: props.model.password,
-  email: props.model.email
+  password: props.model?.id ? 'FAKE_PASSWORD' : '',
+  email: props.model?.email,
+  confirm: ''
 });
-
 
 </script>
 

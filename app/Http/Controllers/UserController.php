@@ -49,7 +49,30 @@ class UserController extends Controller
 
     public function update(Request $request, User $user): RedirectResponse
     {
-        $user->update($request->only('name', 'password', 'email'));
+        $request->validate([
+            'name' => 'required',
+            'password' => 'required',
+            'email' => 'email|unique:users'
+        ]);
+
+        $payload = $request->only('name', 'password', 'email');
+        // se la password non è stata cambiata uso quella del db
+        if ($payload['password'] === 'FAKE_PASSWORD') {
+            unset($payload['password']);
+        }
+        $user->update($payload);
+        return response()->redirectToRoute('users.index');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'password' => 'required',
+            'email' => 'email|unique:users'
+        ]);
+
+        User::create($request->only('email', 'name', 'password'));
         return response()->redirectToRoute('users.index');
     }
 }

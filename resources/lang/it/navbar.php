@@ -9,5 +9,7 @@ return [
     'logout' => 'Disconnetti',
     'dark' => 'Dark',
     'light' => 'Light',
-    'system' => 'System'
+    'system' => 'System',
+    'foodparcel' => 'Genera spesa',
+    'customer' => 'Fruitori'
 ];

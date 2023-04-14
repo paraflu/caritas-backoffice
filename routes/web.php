@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\FoodParcelController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseDetailController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -39,13 +41,14 @@ Route::prefix('/users')
     ->group(function () {
         Route::get('', [UserController::class, 'index'])->name('index');
         Route::get('create', [UserController::class, 'create'])->name('create');
+        Route::post('store', [UserController::class, 'store'])->name('store');
         Route::get('{user}', [UserController::class, 'edit'])->name('edit');
         Route::post('pagedata', [UserController::class, 'pagedata'])->name('pagedata');
         Route::put('update/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('{user}', [UserController::class, 'destroy'])->name('destroy');
     });
 
-Route::prefix('/warehouse_detail')
+Route::prefix('/warehouse_details')
     ->middleware(['auth', 'verified'])
     ->name('warehouse.detail.')
     ->group(function () {
@@ -54,7 +57,24 @@ Route::prefix('/warehouse_detail')
         Route::post('/{warehouse}', [WarehouseDetailController::class, 'index'])->name('index');
     });
 
-Route::prefix('/warehouse')
+Route::prefix('/foodparcels')
+    ->middleware(['auth', 'verified'])
+    ->name('foodparcel.')
+    ->group(function () {
+        Route::get('', [FoodParcelController::class, 'index'])->name('index');
+        Route::post('pagedata', [FoodParcelController::class, 'pagedata'])->name('pagedata');
+    });
+
+Route::prefix('/customers')
+    ->middleware(['auth', 'verified'])
+    ->name('customer.')
+    ->group(function () {
+        Route::get('', [CustomerController::class, 'index'])->name('index');
+        Route::post('pagedata/', [CustomerController::class, 'pagedata'])->name('pagedata');
+        Route::post('pagedata/{warehouse}', [CustomerController::class, 'pagedataByWarehouse'])->name('pagedataByWarehouse');
+    });
+
+Route::prefix('/warehouses')
     ->middleware(['auth', 'verified'])->name('warehouse.')
     ->group(function () {
         Route::get('/', [WarehouseController::class, 'index'])->name('index');

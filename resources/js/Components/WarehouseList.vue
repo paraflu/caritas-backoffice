@@ -13,36 +13,50 @@ import { Ref, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net";
+import Select from 'datatables.net-select';
 
 DataTable.use(DataTablesCore);
+DataTable.use(Select);
 
 const loading: Ref<boolean> = ref(true);
+
+const emits = defineEmits(['select']);
 
 const { t } = useI18n();
 const table = ref<HTMLTableElement | null>(null);
 
-const { redraw } = useDatatable(table, async ({ action, id }: Action) => {
-    if (action === "destroy") {
-        const response = await Swal.fire({
-            icon: "question",
-            text: t("warehouse.confirm_delete"),
-            showCancelButton: true,
-            cancelButtonText: t("form.cancel"),
-            focusCancel: true,
-        });
-        if (response.isConfirmed) {
-            const form = useForm({ id });
-            form.delete(route(`warehouse.${action}`, { id: id! }), {
-                onSuccess: () => {
-                    redraw();
-                },
-            });
-            return;
-        }
-    } else {
-        goto(route(`warehouse.${action}`, { id: id! }));
+const { redraw } = useDatatable(table, async ({ action, id, payload }: Action) => {
+    switch (action) {
+        case 'destroy':
+            {
+                const response = await Swal.fire({
+                    icon: "question",
+                    text: t("warehouse.confirm_delete"),
+                    showCancelButton: true,
+                    cancelButtonText: t("form.cancel"),
+                    focusCancel: true,
+                });
+                if (response.isConfirmed) {
+                    const form = useForm({ id });
+                    form.delete(route(`warehouse.${action}`, { id: id! }), {
+                        onSuccess: () => {
+                            redraw();
+                        },
+                    });
+                    return;
+                }
+                break;
+            }
+        case 'select':
+            {
+                emits('select', ...payload);
+                break;
+            }
+        default:
+            goto(route(`warehouse.${action}`, { id: id! }));
+            break;
     }
-});
+}, ['select']);
 
 const options = createRequest(route("warehouse.pagedata"), {
     columns: [
@@ -61,5 +75,8 @@ const options = createRequest(route("warehouse.pagedata"), {
         },
         { data: "action" },
     ],
+    select: {
+        style: 'single'
+    }
 });
 </script>

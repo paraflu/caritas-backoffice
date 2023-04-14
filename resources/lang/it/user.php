@@ -8,5 +8,6 @@ return [
     'name' => 'Nome utente',
     'email' => 'Email',
     'password' => 'Password',
+    'confirm' => 'Reinserisci password',
     'edit' => 'Modifica utente',
 ];

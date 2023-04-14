@@ -5,7 +5,7 @@ import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net";
 import route from "ziggy-js";
 import { createRequest } from "@/helper/datatable_defaults";
-import { inject, onMounted, Ref, ref } from "vue";
+import { onMounted, Ref, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { goto } from "@/helper/gotourl";
